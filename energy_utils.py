@@ -116,19 +116,30 @@ def categorize(score):
 
 def show_efficiency_confusion_matrix(results_df):
     results_df['Green_Label'] = results_df['Green_Score'].apply(categorize)
+
+    # Filter only LightGBM results
     lightgbm_preds = results_df[results_df['Model'] == 'LightGBM'].copy()
+
+    # Manually classify actual energy usage
     lightgbm_preds['Actual_Label'] = lightgbm_preds['Actual'].apply(
-        lambda x: 'High' if x < 50 else 'Medium' if x < 150 else 'Low')
+        lambda x: 'High' if x < 50 else 'Medium' if x < 150 else 'Low'
+    )
     lightgbm_preds['Predicted_Label'] = lightgbm_preds['Green_Label']
 
+    # Compute confusion matrix
     cm = confusion_matrix(
         lightgbm_preds['Actual_Label'],
         lightgbm_preds['Predicted_Label'],
         labels=['High', 'Medium', 'Low']
     )
 
-    fig, ax = plt.subplots()
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['High', 'Medium', 'Low'])
-    disp.plot(ax=ax, cmap='Greens')
+    # Create proper figure and axis for Streamlit rendering
+    fig, ax = plt.subplots(figsize=(6, 4))
+    disp = ConfusionMatrixDisplay(
+        confusion_matrix=cm,
+        display_labels=['High', 'Medium', 'Low']
+    )
+    disp.plot(ax=ax, cmap='Greens', colorbar=False)
     ax.set_title("Green Efficiency Confusion Matrix (LightGBM)")
+    plt.tight_layout()
     return fig
