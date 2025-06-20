@@ -40,6 +40,7 @@ def train_models(X_train, X_test, y_train, y_test):
     results_df = pd.DataFrame()
 
     for name, model in models.items():
+        print(f"Training {name}...")
         model.fit(X_train, y_train)
         preds = model.predict(X_test)
 
