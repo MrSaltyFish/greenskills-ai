@@ -96,6 +96,24 @@ def categorize(score):
     else:
         return 'Low'
 
+# def show_efficiency_confusion_matrix(results_df):
+#     results_df['Green_Label'] = results_df['Green_Score'].apply(categorize)
+#     lightgbm_preds = results_df[results_df['Model'] == 'LightGBM'].copy()
+#     lightgbm_preds['Actual_Label'] = lightgbm_preds['Actual'].apply(
+#         lambda x: 'High' if x < 50 else 'Medium' if x < 150 else 'Low')
+#     lightgbm_preds['Predicted_Label'] = lightgbm_preds['Green_Label']
+
+#     cm = confusion_matrix(lightgbm_preds['Actual_Label'], lightgbm_preds['Predicted_Label'],
+#                           labels=['High', 'Medium', 'Low'])
+#     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['High', 'Medium', 'Low'])
+#     disp.plot(cmap='Greens')
+#     plt.title("Green Efficiency Confusion Matrix (LightGBM)")
+#     fig, ax = plt.subplots()
+#     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['High', 'Medium', 'Low'])
+#     disp.plot(ax=ax, cmap='Greens')
+#     ax.set_title("Green Efficiency Confusion Matrix (LightGBM)")
+#     return fig  # ✅ Return the figure
+
 def show_efficiency_confusion_matrix(results_df):
     results_df['Green_Label'] = results_df['Green_Score'].apply(categorize)
     lightgbm_preds = results_df[results_df['Model'] == 'LightGBM'].copy()
@@ -103,13 +121,14 @@ def show_efficiency_confusion_matrix(results_df):
         lambda x: 'High' if x < 50 else 'Medium' if x < 150 else 'Low')
     lightgbm_preds['Predicted_Label'] = lightgbm_preds['Green_Label']
 
-    cm = confusion_matrix(lightgbm_preds['Actual_Label'], lightgbm_preds['Predicted_Label'],
-                          labels=['High', 'Medium', 'Low'])
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['High', 'Medium', 'Low'])
-    disp.plot(cmap='Greens')
-    plt.title("Green Efficiency Confusion Matrix (LightGBM)")
+    cm = confusion_matrix(
+        lightgbm_preds['Actual_Label'],
+        lightgbm_preds['Predicted_Label'],
+        labels=['High', 'Medium', 'Low']
+    )
+
     fig, ax = plt.subplots()
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['High', 'Medium', 'Low'])
     disp.plot(ax=ax, cmap='Greens')
     ax.set_title("Green Efficiency Confusion Matrix (LightGBM)")
-    return fig  # ✅ Return the figure
+    return fig
