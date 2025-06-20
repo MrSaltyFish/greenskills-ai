@@ -108,5 +108,8 @@ def show_efficiency_confusion_matrix(results_df):
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['High', 'Medium', 'Low'])
     disp.plot(cmap='Greens')
     plt.title("Green Efficiency Confusion Matrix (LightGBM)")
-    plt.show()
-
+    fig, ax = plt.subplots()
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['High', 'Medium', 'Low'])
+    disp.plot(ax=ax, cmap='Greens')
+    ax.set_title("Green Efficiency Confusion Matrix (LightGBM)")
+    return fig  # ✅ Return the figure
