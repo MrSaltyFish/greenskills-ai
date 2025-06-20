@@ -12,10 +12,16 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # All your function definitions here:
-def load_and_clean_data(file_path):
-    df = pd.read_csv(file_path)
+def load_and_clean_data(file):
+    file.seek(0)  # 🔁 Reset pointer
+    df = pd.read_csv(file)
+
+    if df.empty:
+        raise ValueError("Uploaded CSV is empty or unreadable.")
+
     if 'date' in df.columns:
         df.drop(columns=['date'], inplace=True)
+
     df = df.select_dtypes(include=[np.number])
     return df
 

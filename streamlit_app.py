@@ -26,6 +26,7 @@ if uploaded_file:
     df = pd.read_csv(uploaded_file)
     st.write("📄 First few rows of uploaded data:")
     st.dataframe(df.head())
+    uploaded_file.seek(0)
     df = load_and_clean_data(uploaded_file)
     X, y = prepare_features(df)
     st.write("✅ Columns in dataset:", df.columns.tolist())
