@@ -82,8 +82,10 @@ if uploaded_file:
     st.subheader("📌 Actual vs Predicted (per Model)")
     try:
         fig2 = plt.figure()
-        plot_actual_vs_predicted(results_df)
-        st.pyplot(fig2)
+        # plot_actual_vs_predicted(results_df)
+        # st.pyplot(fig2)
+        for fig in plot_actual_vs_predicted(results_df):
+            st.pyplot(fig)
     except Exception as e:
         st.error(f"❌ Failed to plot Actual vs Predicted: {e}")
 

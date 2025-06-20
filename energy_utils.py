@@ -77,16 +77,32 @@ def plot_green_score(results_df):
     plt.ylabel('Count')
     plt.show()
 
+# def plot_actual_vs_predicted(results_df):
+#     for model_name in results_df['Model'].unique():
+#         sample = results_df[results_df['Model'] == model_name]
+#         sns.scatterplot(x='Actual', y='Predicted', data=sample, alpha=0.5)
+#         plt.plot([sample['Actual'].min(), sample['Actual'].max()],
+#                  [sample['Actual'].min(), sample['Actual'].max()], color='red', linestyle='--')
+#         plt.title(f'Actual vs Predicted - {model_name}')
+#         plt.xlabel('Actual Energy Usage')
+#         plt.ylabel('Predicted Energy Usage')
+#         plt.show()
+
 def plot_actual_vs_predicted(results_df):
+    figs = []
     for model_name in results_df['Model'].unique():
         sample = results_df[results_df['Model'] == model_name]
-        sns.scatterplot(x='Actual', y='Predicted', data=sample, alpha=0.5)
-        plt.plot([sample['Actual'].min(), sample['Actual'].max()],
-                 [sample['Actual'].min(), sample['Actual'].max()], color='red', linestyle='--')
-        plt.title(f'Actual vs Predicted - {model_name}')
-        plt.xlabel('Actual Energy Usage')
-        plt.ylabel('Predicted Energy Usage')
-        plt.show()
+        fig, ax = plt.subplots()
+        sns.scatterplot(x='Actual', y='Predicted', data=sample, alpha=0.5, ax=ax)
+        ax.plot([sample['Actual'].min(), sample['Actual'].max()],
+                [sample['Actual'].min(), sample['Actual'].max()],
+                color='red', linestyle='--')
+        ax.set_title(f'Actual vs Predicted - {model_name}')
+        ax.set_xlabel('Actual Energy Usage')
+        ax.set_ylabel('Predicted Energy Usage')
+        figs.append(fig)
+    return figs
+
 
 def categorize(score):
     if score >= 80:
