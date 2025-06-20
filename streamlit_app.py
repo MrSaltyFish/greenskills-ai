@@ -103,8 +103,7 @@ if uploaded_file:
     # ⚖️ Confusion Matrix
     st.subheader("⚖️ Green Efficiency Classification")
     try:
-        fig4 = plt.figure()
-        show_efficiency_confusion_matrix(results_df)
+        fig4 = show_efficiency_confusion_matrix(results_df)
         st.pyplot(fig4)
     except Exception as e:
         st.error(f"❌ Failed to plot confusion matrix: {e}")
