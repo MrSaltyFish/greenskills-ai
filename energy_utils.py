@@ -51,7 +51,7 @@ def train_models(X_train, X_test, y_train, y_test):
         preds = model.predict(X_test)
 
         temp = pd.DataFrame({
-            'Model': name,
+            'Model': [name] * len(preds),
             'Actual': y_test.reset_index(drop=True),
             'Predicted': preds
         })
