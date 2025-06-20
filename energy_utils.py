@@ -50,22 +50,15 @@ def train_models(X_train, X_test, y_train, y_test):
         model.fit(X_train, y_train)
         preds = model.predict(X_test)
 
-        actual = y_test.reset_index(drop=True)
-        predicted = pd.Series(preds)
-
         temp = pd.DataFrame({
-            'Actual': actual,
-            'Predicted': predicted
+            'Model': name,
+            'Actual': y_test.reset_index(drop=True),
+            'Predicted': preds
         })
 
-        # 🧠 Now insert the model name *after* DataFrame is built
-        temp['Model'] = name
-
-        # 🎯 Normalize prediction for Green Score (per model, so it’s fair)
         temp['Green_Score'] = 100 - ((temp['Predicted'] - temp['Predicted'].min()) /
                                      (temp['Predicted'].max() - temp['Predicted'].min()) * 100)
         temp['Green_Score'] = temp['Green_Score'].clip(0, 100)
-
         results_df = pd.concat([results_df, temp], ignore_index=True)
 
     return results_df

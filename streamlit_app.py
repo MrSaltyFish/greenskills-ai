@@ -20,47 +20,51 @@ st.title("🌿 Green Energy Prediction Dashboard")
 
 uploaded_file = st.file_uploader("Upload your energy dataset", type=["csv"])
 
-
-
-    # df = pd.read_csv(uploaded_file)
-    # st.write("📄 First few rows of uploaded data:")
-    # st.dataframe(df.head())
-    # uploaded_file.seek(0)
-
 if uploaded_file:
     st.success("📁 File uploaded successfully!")
+
     uploaded_file.seek(0)
     df = load_and_clean_data(uploaded_file)
     st.write("✅ Data preview:", df.head())
 
+    # 🛠️ Feature Engineering
     try:
         X, y = prepare_features(df)
-        st.write("✅ Feature matrix and target ready.")
+        st.write(f"✅ Features and target extracted. (X: {X.shape}, y: {y.shape})")
     except Exception as e:
-        st.error(f"❌ Error in feature prep: {e}")
+        st.error(f"❌ Feature extraction failed: {e}")
         st.stop()
 
     try:
         X_scaled, scaler = scale_features(X)
-        st.write("✅ Features scaled.")
+        st.write("✅ Features scaled successfully.")
     except Exception as e:
-        st.error(f"❌ Scaling error: {e}")
+        st.error(f"❌ Feature scaling failed: {e}")
         st.stop()
 
     try:
         X_train, X_test, y_train, y_test = train_test_split(
             X_scaled, y, test_size=0.2, random_state=42
         )
-        st.write("✅ Data split into train/test.")
+        st.write("✅ Train-test split done.")
     except Exception as e:
-        st.error(f"❌ Train/test split error: {e}")
+        st.error(f"❌ Data splitting failed: {e}")
         st.stop()
 
+
+    # 🤖 Train Models
     try:
         with st.spinner("🏗️ Training models..."):
             results_df = train_models(X_train, X_test, y_train, y_test)
         st.success("✅ Models trained successfully.")
-        st.dataframe(results_df.head())
+        st.subheader("📊 Prediction Sample")
+        st.dataframe(results_df.head(10))
+
+        # 💾 Download Button
+        st.download_button("📁 Download Results CSV",
+                           data=results_df.to_csv(index=False),
+                           file_name="green_score_results.csv",
+                           mime="text/csv")
     except Exception as e:
         st.error(f"❌ Model training error: {e}")
         st.stop()
@@ -68,32 +72,40 @@ if uploaded_file:
     # 📈 Green Score Distribution
     st.subheader("📈 Green Score Distribution")
     try:
-        fig1, ax1 = plt.subplots()
-        sns.histplot(results_df['Green_Score'], bins=30, kde=True, color='green', ax=ax1)
-        ax1.set_title('Green Score Distribution')
-        ax1.set_xlabel('Green Score')
-        ax1.set_ylabel('Count')
+        fig1 = plt.figure()
+        plot_green_score(results_df)
         st.pyplot(fig1)
     except Exception as e:
-        st.error(f"Failed to plot Green Score Distribution: {e}")
+        st.error(f"❌ Failed to plot Green Score: {e}")
 
-    # 📌 Actual vs Predicted for all models
+    # 🎯 Actual vs Predicted per Model
     st.subheader("📌 Actual vs Predicted (per Model)")
     try:
-        model_names = results_df['Model'].unique()
-        for model_name in model_names:
-            sample = results_df[results_df['Model'] == model_name]
-            fig2, ax2 = plt.subplots()
-            sns.scatterplot(x='Actual', y='Predicted', data=sample, ax=ax2, alpha=0.5)
-            ax2.plot([sample['Actual'].min(), sample['Actual'].max()],
-                    [sample['Actual'].min(), sample['Actual'].max()],
-                    color='red', linestyle='--')
-            ax2.set_title(f'Actual vs Predicted - {model_name}')
-            ax2.set_xlabel('Actual Energy Usage')
-            ax2.set_ylabel('Predicted Energy Usage')
-            st.pyplot(fig2)
+        fig2 = plt.figure()
+        plot_actual_vs_predicted(results_df)
+        st.pyplot(fig2)
     except Exception as e:
-        st.error(f"Failed to plot Actual vs Predicted: {e}")
+        st.error(f"❌ Failed to plot Actual vs Predicted: {e}")
+
+    # 🔥 Feature Importance
+    st.subheader("🔥 Feature Importance (LightGBM)")
+    try:
+        imp_df = compute_feature_importance(X_train, y_train, X.columns)
+        fig3 = plt.figure()
+        sns.barplot(data=imp_df.head(10), x='Importance', y='Feature', palette='YlGn')
+        plt.title('Top 10 Important Features')
+        st.pyplot(fig3)
+    except Exception as e:
+        st.error(f"❌ Failed to compute or plot feature importances: {e}")
+
+    # ⚖️ Confusion Matrix
+    st.subheader("⚖️ Green Efficiency Classification")
+    try:
+        fig4 = plt.figure()
+        show_efficiency_confusion_matrix(results_df)
+        st.pyplot(fig4)
+    except Exception as e:
+        st.error(f"❌ Failed to plot confusion matrix: {e}")
 
 
 
